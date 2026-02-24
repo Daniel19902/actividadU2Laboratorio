@@ -28,6 +28,12 @@ services:
       # Montar socket Docker del host para builds Docker-in-Docker
       - /var/run/docker.sock:/var/run/docker.sock
 
+    # ── Permisos Docker socket (Windows / Docker Desktop) ────────
+    # Ejecutar como root para poder acceder al socket montado.
+    # En Linux puedes reemplazar esto por group_add con el GID real
+    # del socket: $(stat -c '%g' /var/run/docker.sock)
+    user: root
+
     environment:
       # Deshabilitar el wizard de setup inicial (opcional)
       # JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
