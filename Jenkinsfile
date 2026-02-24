@@ -15,7 +15,7 @@ pipeline {
         // Registry de destino — Docker Hub
         REGISTRY      = 'docker.io'
         // Repositorio Docker Hub (DOCKERHUB_USERNAME/repo)
-        REPO          = 'TU_USUARIO_DOCKERHUB/actividadu2laboratorio'
+        REPO          = 'darkeater/actividadu2laboratorio'
         // Tag de imagen: rama + commit corto
         IMAGE_TAG     = "${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
         FULL_IMAGE    = "${REPO}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"

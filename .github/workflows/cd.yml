@@ -28,7 +28,7 @@ concurrency:
 env:
   REGISTRY: docker.io
   # Repositorio Docker Hub (DOCKERHUB_USERNAME/repo)
-  IMAGE_NAME: TU_USUARIO_DOCKERHUB/actividadu2laboratorio
+  IMAGE_NAME: darkeater/actividadu2laboratorio
 
 jobs:
   # ── Job 1: Build y Push a Docker Hub ──────────────────────────
