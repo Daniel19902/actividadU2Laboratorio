@@ -7,7 +7,7 @@ describe('GET /', () => {
     it('debe responder con 200 y el mensaje de bienvenida', async () => {
         const res = await request(app).get('/');
         expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty('message', 'Bienvenido a actividadU2Laboratorio CD nice');
+        expect(res.body).toHaveProperty('message', 'Bienvenido a actividadU2Laboratorio CD nice test1');
         expect(res.body).toHaveProperty('version', '1.0.0');
         expect(res.body).toHaveProperty('timestamp');
     });
