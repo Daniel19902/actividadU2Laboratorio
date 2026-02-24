@@ -53,7 +53,15 @@ pipeline {
         stage('📥 Checkout') {
             steps {
                 echo "🔖 Rama: ${env.GIT_BRANCH} | Commit: ${env.GIT_COMMIT.take(7)}"
-                checkout scm
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${env.GIT_BRANCH ?: 'main'}"]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Daniel19902/actividadU2Laboratorio.git',
+                        // ID de la credencial configurada en Jenkins → Manage Credentials
+                        credentialsId: 'github-credentials'
+                    ]]
+                ])
             }
         }
 
@@ -156,12 +164,6 @@ pipeline {
                         kubectl get svc actividadu2lab-svc
                     """
                 }
-
-                // ─ Opción C (ACTIVA): Deploy genérico / simulación ────
-                sh """
-                    echo "✅ Deploy simulado para: ${env.FULL_IMAGE}"
-                    echo "Activa la Opción A (SSH) o B (Kubernetes) según tu infraestructura."
-                """
             }
         }
     }
