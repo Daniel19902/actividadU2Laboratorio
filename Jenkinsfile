@@ -5,14 +5,9 @@
 // =============================================================
 
 pipeline {
-    // Agente con soporte Docker (requiere Docker instalado en el nodo)
-    agent {
-        docker {
-            image 'node:20-alpine'
-            // Monta el socket de Docker para poder hacer builds dentro del agente
-            args  '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-        }
-    }
+    // Agente que ejecuta en el propio contenedor Jenkins
+    // (el contenedor ya tiene Docker CLI y Node 20 instalados)
+    agent any
 
     // ── Variables de entorno globales ────────────────────────────
     environment {
