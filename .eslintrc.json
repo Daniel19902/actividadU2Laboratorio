@@ -20,10 +20,6 @@
             "error",
             "single"
         ],
-        "indent": [
-            "error",
-            2
-        ],
         "eqeqeq": "error",
         "no-var": "error",
         "prefer-const": "error"
