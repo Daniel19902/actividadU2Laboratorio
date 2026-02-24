@@ -12,17 +12,16 @@ pipeline {
     // ── Variables de entorno globales ────────────────────────────
     environment {
         // Nombre de la imagen Docker a construir
-        IMAGE_NAME    = 'actividadu2lab'
-        // Registry de destino — cambiar por tu registry real
-        REGISTRY      = 'ghcr.io'
-        // Repositorio GitHub (owner/repo) — Docker requiere minúsculas
-        REPO          = 'daniel19902/actividadu2laboratorio'
+        // Registry de destino — Docker Hub
+        REGISTRY      = 'docker.io'
+        // Repositorio Docker Hub (DOCKERHUB_USERNAME/repo)
+        REPO          = 'TU_USUARIO_DOCKERHUB/actividadu2laboratorio'
         // Tag de imagen: rama + commit corto
         IMAGE_TAG     = "${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
-        FULL_IMAGE    = "${REGISTRY}/${REPO}/${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
+        FULL_IMAGE    = "${REPO}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
         // Credenciales almacenadas en Jenkins → Manage Credentials
-        // ID del secret de registry (usuario + token)
-        REGISTRY_CRED = 'ghcr-credentials'
+        // ID de la credencial de Docker Hub (Username + Access Token/Password)
+        REGISTRY_CRED = 'dockerhub-credentials'
         // ID del secret SSH para el servidor de despliegue (si aplica)
         DEPLOY_CRED   = 'deploy-ssh-key'
     }
