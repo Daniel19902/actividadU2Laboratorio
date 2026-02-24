@@ -1,0 +1,76 @@
+# =============================================================
+# k8s/deployment.yaml
+# Deployment de actividadU2Laboratorio en Kubernetes local
+# =============================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actividadu2lab
+  namespace: default
+  labels:
+    app: actividadu2lab
+    version: "1.0.0"
+spec:
+  # ── Número de réplicas (pods) ─────────────────────────────────
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: actividadu2lab
+
+  # ── Estrategia de actualización sin downtime ──────────────────
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # crea 1 pod extra durante el update
+      maxUnavailable: 0  # nunca deja pods fuera de servicio
+
+  template:
+    metadata:
+      labels:
+        app: actividadu2lab
+    spec:
+      containers:
+        - name: app
+          # Imagen publicada por el CD pipeline (Jenkins o GitHub Actions)
+          # Jenkins la reemplaza con: kubectl set image deployment/actividadu2lab app=<nueva-imagen>
+          image: ghcr.io/daniel19902/actividadu2laboratorio/actividadu2lab:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3000   # puerto interno de la app Node.js
+
+          # ── Variables de entorno ────────────────────────────────
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+
+          # ── Recursos (ajusta según tu cluster local) ─────────────
+          resources:
+            requests:
+              cpu: "100m"     # 0.1 CPU
+              memory: "128Mi"
+            limits:
+              cpu: "250m"     # 0.25 CPU
+              memory: "256Mi"
+
+          # ── Liveness probe: reinicia el pod si la app no responde ─
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+
+          # ── Readiness probe: espera antes de enviar tráfico ────────
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3

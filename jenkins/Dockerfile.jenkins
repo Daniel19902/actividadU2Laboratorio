@@ -41,8 +41,9 @@ RUN mkdir -p $NVM_DIR && \
 ENV NODE_PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/lib/node_modules
 ENV PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/bin:$PATH
 
-# ── Agregar jenkins al grupo docker (acceso al socket) ────────
-RUN usermod -aG docker jenkins
+# ── Crear grupo docker y agregar jenkins (acceso al socket) ───
+# groupadd -f: no falla si el grupo ya existe
+RUN groupadd -f docker && usermod -aG docker jenkins
 
 # ── Pre-instalar plugins de Jenkins ──────────────────────────
 # (se pueden instalar vía CLI en lugar de la UI del primer inicio)

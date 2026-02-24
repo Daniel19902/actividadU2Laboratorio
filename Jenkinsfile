@@ -21,7 +21,7 @@ pipeline {
         // Registry de destino — cambiar por tu registry real
         REGISTRY      = 'ghcr.io'
         // Repositorio GitHub (owner/repo)
-        REPO          = 'tu-usuario/actividadU2Laboratorio'
+        REPO          = 'Daniel19902/actividadU2Laboratorio'
         // Tag de imagen: rama + commit corto
         IMAGE_TAG     = "${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
         FULL_IMAGE    = "${REGISTRY}/${REPO}/${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
@@ -137,41 +137,25 @@ pipeline {
                 branch 'main'
             }
             steps {
-                echo "🚀 Iniciando despliegue de ${env.FULL_IMAGE}..."
+                echo "🚀 Iniciando despliegue de ${env.FULL_IMAGE}..."                
+                withKubeConfig([credentialsId: 'kube-config']) {
+                    sh """
+                        # Aplica manifests (crea o actualiza Deployment + Service)
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
 
-                // ─ Opción A: Deploy por SSH (Docker en VPS) ──────────
-                // Descomenta y configura DEPLOY_HOST si usas SSH:
-                //
-                // withCredentials([sshUserPrivateKey(
-                //     credentialsId: env.DEPLOY_CRED,
-                //     keyFileVariable: 'SSH_KEY',
-                //     usernameVariable: 'SSH_USER'
-                // )]) {
-                //     sh """
-                //         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@\${DEPLOY_HOST} '
-                //             docker pull ${env.FULL_IMAGE}
-                //             docker stop actividadu2lab-app || true
-                //             docker rm actividadu2lab-app || true
-                //             docker run -d \\
-                //                 --name actividadu2lab-app \\
-                //                 --restart unless-stopped \\
-                //                 -p 3000:3000 \\
-                //                 -e NODE_ENV=production \\
-                //                 ${env.FULL_IMAGE}
-                //         '
-                //     """
-                // }
+                        # Actualiza la imagen del contenedor con la nueva versión
+                        kubectl set image deployment/actividadu2lab \
+                            app=${env.FULL_IMAGE}
 
-                // ─ Opción B: Deploy en Kubernetes ────────────────────
-                // Descomenta si usas kubectl:
-                //
-                // withKubeConfig([credentialsId: 'kube-config']) {
-                //     sh """
-                //         kubectl set image deployment/actividadu2lab \
-                //             app=${env.FULL_IMAGE}
-                //         kubectl rollout status deployment/actividadu2lab
-                //     """
-                // }
+                        # Espera a que el rolling update termine
+                        kubectl rollout status deployment/actividadu2lab --timeout=120s
+
+                        # Muestra el estado de los pods desplegados
+                        kubectl get pods -l app=actividadu2lab
+                        kubectl get svc actividadu2lab-svc
+                    """
+                }
 
                 // ─ Opción C (ACTIVA): Deploy genérico / simulación ────
                 sh """
