@@ -1,0 +1,47 @@
+version: '3.9'
+
+# =============================================================
+# docker-compose.jenkins.yml
+# Stack local para levantar Jenkins con soporte Docker-in-Docker
+# Uso:
+#   cd jenkins/
+#   docker compose -f docker-compose.jenkins.yml up -d
+#   → Abrir http://localhost:8080
+# =============================================================
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    image: actividadu2lab-jenkins:latest
+    container_name: actividadu2lab-jenkins
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080" # UI web de Jenkins
+      - "50000:50000" # Puerto de agentes JNLP
+
+    volumes:
+      # Persistir configuración y jobs de Jenkins
+      - jenkins_home:/var/jenkins_home
+      # Montar socket Docker del host para builds Docker-in-Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    environment:
+      # Deshabilitar el wizard de setup inicial (opcional)
+      # JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+      JAVA_OPTS: "-Xmx1024m -Xms512m"
+      # URL pública de Jenkins (usada en notificaciones y webhooks)
+      JENKINS_URL: "http://localhost:8080"
+
+    healthcheck:
+      test: [ "CMD", "curl", "-sSf", "http://localhost:8080/login" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  jenkins_home:
+    name: actividadu2lab-jenkins-home

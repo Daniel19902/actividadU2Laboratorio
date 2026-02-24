@@ -1,0 +1,52 @@
+# =============================================================
+# Dockerfile.jenkins
+# Imagen Jenkins LTS con Docker CLI + Node 20 preinstalados
+# Permite ejecutar builds Docker y npm directamente desde Jenkins
+# =============================================================
+
+FROM jenkins/jenkins:lts-jdk17
+
+USER root
+
+# ── Instalar Docker CLI ───────────────────────────────────────
+RUN apt-get update && \
+    apt-get install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | \
+    gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli && \
+    rm -rf /var/lib/apt/lists/*
+
+# ── Instalar Node.js 20 (via nvm) ────────────────────────────
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_VERSION=20
+RUN mkdir -p $NVM_DIR && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default
+
+ENV NODE_PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/bin:$PATH
+
+# ── Agregar jenkins al grupo docker (acceso al socket) ────────
+RUN usermod -aG docker jenkins
+
+# ── Pre-instalar plugins de Jenkins ──────────────────────────
+# (se pueden instalar vía CLI en lugar de la UI del primer inicio)
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
+
+USER jenkins

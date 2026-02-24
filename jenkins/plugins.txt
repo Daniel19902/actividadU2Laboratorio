@@ -1,0 +1,31 @@
+# Lista de plugins para Jenkins
+# Referencia: https://plugins.jenkins.io/
+# Usada por jenkins-plugin-cli en Dockerfile.jenkins
+
+# Pipeline y SCM
+workflow-aggregator
+git
+github
+github-branch-source
+pipeline-stage-view
+
+# Docker
+docker-plugin
+docker-workflow
+docker-commons
+
+# Credenciales y seguridad
+credentials-binding
+ssh-agent
+plain-credentials
+
+# Calidad de código y reportes
+htmlpublisher
+junit
+cobertura
+
+# Utilidades
+ansicolor
+timestamper
+build-timeout
+ws-cleanup
