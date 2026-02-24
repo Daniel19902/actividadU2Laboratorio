@@ -8,11 +8,13 @@ FROM jenkins/jenkins:lts-jdk17
 
 USER root
 
-# ── Instalar Docker CLI ───────────────────────────────────────
+# ── Instalar Docker CLI + Git ─────────────────────────────────
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
     curl \
+    git \
+    openssh-client \
     gnupg \
     lsb-release && \
     install -m 0755 -d /etc/apt/keyrings && \
@@ -28,22 +30,15 @@ RUN apt-get update && \
     apt-get install -y docker-ce-cli && \
     rm -rf /var/lib/apt/lists/*
 
-# ── Instalar Node.js 20 (via nvm) ────────────────────────────
-ENV NVM_DIR=/usr/local/nvm
-ENV NODE_VERSION=20
-RUN mkdir -p $NVM_DIR && \
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
-    . $NVM_DIR/nvm.sh && \
-    nvm install $NODE_VERSION && \
-    nvm alias default $NODE_VERSION && \
-    nvm use default
-
-ENV NODE_PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/lib/node_modules
-ENV PATH=$NVM_DIR/versions/node/v${NODE_VERSION}/bin:$PATH
+# ── Instalar Node.js 20 (via NodeSource) ─────────────────────
+# Esto asegura que node y npm estén en /usr/bin/, accesibles para Jenkins
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
 
 # ── Crear grupo docker y agregar jenkins (acceso al socket) ───
 # groupadd -f: no falla si el grupo ya existe
-RUN groupadd -f docker && usermod -aG docker jenkins
+RUN groupadd -f docker && usermod -aG docker jenkins && \
+    git config --global --add safe.directory '*'
 
 # ── Pre-instalar plugins de Jenkins ──────────────────────────
 # (se pueden instalar vía CLI en lugar de la UI del primer inicio)

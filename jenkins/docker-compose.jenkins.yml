@@ -34,6 +34,11 @@ services:
     # del socket: $(stat -c '%g' /var/run/docker.sock)
     user: root
 
+    # ── DNS explícito (evita fallos de resolución en Docker Desktop) ─
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
     environment:
       # Deshabilitar el wizard de setup inicial (opcional)
       # JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
