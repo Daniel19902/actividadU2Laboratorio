@@ -112,11 +112,7 @@ pipeline {
         }
 
         // ── Stage 6: Push Docker Image ─────────────────────────────
-        // Solo se ejecuta en la rama main
         stage('📤 Push Image') {
-            when {
-                branch 'main'
-            }
             steps {
                 echo "📤 Subiendo imagen al registry: ${env.REGISTRY}"
                 withCredentials([usernamePassword(
@@ -134,11 +130,7 @@ pipeline {
         }
 
         // ── Stage 7: Deploy ────────────────────────────────────────
-        // Solo se ejecuta en la rama main
         stage('🚀 Deploy') {
-            when {
-                branch 'main'
-            }
             steps {
                 echo "🚀 Iniciando despliegue de ${env.FULL_IMAGE}..."                
                 withKubeConfig([credentialsId: 'kube-config']) {
