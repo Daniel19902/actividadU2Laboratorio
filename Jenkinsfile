@@ -15,8 +15,8 @@ pipeline {
         IMAGE_NAME    = 'actividadu2lab'
         // Registry de destino — cambiar por tu registry real
         REGISTRY      = 'ghcr.io'
-        // Repositorio GitHub (owner/repo)
-        REPO          = 'Daniel19902/actividadU2Laboratorio'
+        // Repositorio GitHub (owner/repo) — Docker requiere minúsculas
+        REPO          = 'daniel19902/actividadu2laboratorio'
         // Tag de imagen: rama + commit corto
         IMAGE_TAG     = "${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
         FULL_IMAGE    = "${REGISTRY}/${REPO}/${IMAGE_NAME}:${GIT_BRANCH.replaceAll('/', '-')}-${GIT_COMMIT.take(7)}"
