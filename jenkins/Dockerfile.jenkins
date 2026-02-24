@@ -8,7 +8,7 @@ FROM jenkins/jenkins:lts-jdk17
 
 USER root
 
-# ── Instalar Docker CLI + Git ─────────────────────────────────
+# ── Instalar Docker CLI y Git ─────────────────────────
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
@@ -17,6 +17,7 @@ RUN apt-get update && \
     openssh-client \
     gnupg \
     lsb-release && \
+    # Key Docker
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | \
     gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
@@ -29,6 +30,11 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y docker-ce-cli && \
     rm -rf /var/lib/apt/lists/*
+
+# ── Instalar kubectl directamente (binario) ──────────────────
+RUN curl -sSLO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
+    rm kubectl
 
 # ── Instalar Node.js 20 (via NodeSource) ─────────────────────
 # Esto asegura que node y npm estén en /usr/bin/, accesibles para Jenkins

@@ -9,10 +9,11 @@ github
 github-branch-source
 pipeline-stage-view
 
-# Docker
+# Docker & Kubernetes
 docker-plugin
 docker-workflow
 docker-commons
+kubernetes-cli
 
 # Credenciales y seguridad
 credentials-binding

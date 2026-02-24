@@ -39,6 +39,10 @@ services:
       - 8.8.8.8
       - 1.1.1.1
 
+    # Permite al contenedor resolver kubernetes.docker.internal (host)
+    extra_hosts:
+      - "kubernetes.docker.internal:host-gateway"
+
     environment:
       # Deshabilitar el wizard de setup inicial (opcional)
       # JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
