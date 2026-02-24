@@ -55,7 +55,7 @@ pipeline {
                 echo "🔖 Rama: ${env.GIT_BRANCH} | Commit: ${env.GIT_COMMIT.take(7)}"
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: "*/${env.GIT_BRANCH ?: 'main'}"]],
+                    branches: [[name: "${env.GIT_BRANCH ?: 'main'}"]],
                     userRemoteConfigs: [[
                         url: 'https://github.com/Daniel19902/actividadU2Laboratorio.git',
                         // ID de la credencial configurada en Jenkins → Manage Credentials
