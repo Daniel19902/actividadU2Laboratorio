@@ -1,14 +1,7 @@
-# =============================================================
-# Dockerfile.jenkins
-# Imagen Jenkins LTS con Docker CLI + Node 20 preinstalados
-# Permite ejecutar builds Docker y npm directamente desde Jenkins
-# =============================================================
-
 FROM jenkins/jenkins:lts-jdk17
 
 USER root
 
-# ── Instalar Docker CLI y Git ─────────────────────────
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
@@ -17,7 +10,6 @@ RUN apt-get update && \
     openssh-client \
     gnupg \
     lsb-release && \
-    # Key Docker
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | \
     gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \

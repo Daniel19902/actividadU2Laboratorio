@@ -12,7 +12,7 @@ app.use(express.json());
  */
 app.get('/', (req, res) => {
     res.status(200).json({
-        message: 'Bienvenido a actividadU2Laboratorio CD nice test1',
+        message: 'Bienvenido a actividadU2Laboratorio',
         version: '1.0.0',
         timestamp: new Date().toISOString(),
     });

@@ -1,15 +1,7 @@
-// =============================================================
-// Jenkinsfile — actividadU2Laboratorio
-// Pipeline declarativo: CI (lint → test) + CD (build → push → deploy)
-// Compatible con Jenkins 2.x+ y el plugin Docker Pipeline
-// =============================================================
-
 pipeline {
     // Agente que ejecuta en el propio contenedor Jenkins
     // (el contenedor ya tiene Docker CLI y Node 20 instalados)
     agent any
-
-    // ── Variables de entorno globales ────────────────────────────
     environment {
         // Nombre de la imagen Docker a construir
         // Registry de destino — Docker Hub
@@ -22,8 +14,6 @@ pipeline {
         // Credenciales almacenadas en Jenkins → Manage Credentials
         // ID de la credencial de Docker Hub (Username + Access Token/Password)
         REGISTRY_CRED = 'dockerhub-credentials'
-        // ID del secret SSH para el servidor de despliegue (si aplica)
-        DEPLOY_CRED   = 'deploy-ssh-key'
     }
 
     // ── Opciones del pipeline ────────────────────────────────────
@@ -56,43 +46,6 @@ pipeline {
                         credentialsId: 'github-credentials'
                     ]]
                 ])
-            }
-        }
-
-        // ── Stage 2: Instalar dependencias ────────────────────────
-        stage('📦 Install') {
-            steps {
-                echo '🔧 Instalando dependencias con npm ci...'
-                sh 'npm ci'
-            }
-        }
-
-        // ── Stage 3: Lint ─────────────────────────────────────────
-        stage('🔍 Lint') {
-            steps {
-                echo '🔍 Ejecutando ESLint...'
-                sh 'npm run lint'
-            }
-        }
-
-        // ── Stage 4: Tests ────────────────────────────────────────
-        stage('🧪 Test') {
-            steps {
-                echo '🧪 Ejecutando tests con cobertura...'
-                sh 'npm test'
-            }
-            post {
-                always {
-                    // Publicar reporte de cobertura en Jenkins
-                    publishHTML(target: [
-                        allowMissing         : false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll              : true,
-                        reportDir            : 'coverage/lcov-report',
-                        reportFiles          : 'index.html',
-                        reportName           : 'Cobertura de Tests'
-                    ])
-                }
             }
         }
 

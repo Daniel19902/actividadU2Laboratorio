@@ -1,14 +1,5 @@
 version: '3.9'
 
-# =============================================================
-# docker-compose.jenkins.yml
-# Stack local para levantar Jenkins con soporte Docker-in-Docker
-# Uso:
-#   cd jenkins/
-#   docker compose -f docker-compose.jenkins.yml up -d
-#   → Abrir http://localhost:8080
-# =============================================================
-
 services:
   jenkins:
     build:
@@ -19,35 +10,24 @@ services:
     restart: unless-stopped
 
     ports:
-      - "8080:8080" # UI web de Jenkins
-      - "50000:50000" # Puerto de agentes JNLP
+      - "8080:8080"
+      - "50000:50000"
 
     volumes:
-      # Persistir configuración y jobs de Jenkins
       - jenkins_home:/var/jenkins_home
-      # Montar socket Docker del host para builds Docker-in-Docker
       - /var/run/docker.sock:/var/run/docker.sock
 
-    # ── Permisos Docker socket (Windows / Docker Desktop) ────────
-    # Ejecutar como root para poder acceder al socket montado.
-    # En Linux puedes reemplazar esto por group_add con el GID real
-    # del socket: $(stat -c '%g' /var/run/docker.sock)
     user: root
 
-    # ── DNS explícito (evita fallos de resolución en Docker Desktop) ─
     dns:
       - 8.8.8.8
       - 1.1.1.1
 
-    # Permite al contenedor resolver kubernetes.docker.internal (host)
     extra_hosts:
       - "kubernetes.docker.internal:host-gateway"
 
     environment:
-      # Deshabilitar el wizard de setup inicial (opcional)
-      # JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
       JAVA_OPTS: "-Xmx1024m -Xms512m"
-      # URL pública de Jenkins (usada en notificaciones y webhooks)
       JENKINS_URL: "http://localhost:8080"
 
     healthcheck:
