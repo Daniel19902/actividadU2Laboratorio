@@ -9,7 +9,7 @@ const server = app.listen(PORT, () => {
     console.log(`[app] Entorno: ${process.env.NODE_ENV || 'development'}`);
 });
 
-// Graceful shutdown
+// Graceful shutdown.
 process.on('SIGTERM', () => {
     console.log('[app] SIGTERM recibido. Cerrando servidor...');
     server.close(() => {
