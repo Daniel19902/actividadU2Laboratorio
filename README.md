@@ -64,7 +64,7 @@ docker compose up --build
 
 ---
 
-## ⚙️ CI/CD con GitHub Actions
+## ⚙️ CI con GitHub Actions
 
 ### CI Pipeline (`.github/workflows/ci.yml`)
 
@@ -90,7 +90,7 @@ Checkout → 🔍 Lint → 🧪 Test (+ reporte cobertura) → 🐳 Build Docker
 
 #### Secrets requeridos en Jenkins
 
-> Settings → Secrets and variables → Actions
+> Settings → Secrets and variables
 
 | Secret | Descripción |
 |--------|-------------|
@@ -159,17 +159,11 @@ Push a GitHub
 │   GitHub Actions — CI Pipeline  │
 │  Lint → Test → Build Docker     │
 └────────────┬────────────────────┘
-             │ (solo rama main)
+             │
              ▼
 ┌─────────────────────────────────┐
-│   GitHub Actions — CD Pipeline  │
-│  Build & Push GHCR → Deploy     │
-└─────────────────────────────────┘
-
-┌─────────────────────────────────┐
-│   Jenkins (alternativo/local)   │
-│  Checkout → Install → Lint      │
-│  → Test → Build → Push → Deploy │
+│   Jenkins — CD Pipeline         │
+│  Build & Push DockerBub→ Deploy │
 └─────────────────────────────────┘
 ```
 
@@ -199,5 +193,8 @@ A continuación, se presentan las capturas que documentan la ejecución y el cor
 
 ### 7. Despliegue Exitoso
 ![Despliegue Exitoso](evidencias/img/despliegueExcitoso.png)
+
+### 8. Aplicacion Funcional
+![Despliegue Exitoso](evidencias/img/testAplicacionweb.png)
 
 ---
