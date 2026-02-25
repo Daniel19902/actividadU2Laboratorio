@@ -1,8 +1,5 @@
 # actividadU2Laboratorio
 
-[![CI Pipeline](https://github.com/TU_USUARIO/actividadU2Laboratorio/actions/workflows/ci.yml/badge.svg)](https://github.com/TU_USUARIO/actividadU2Laboratorio/actions/workflows/ci.yml)
-[![CD Pipeline](https://github.com/TU_USUARIO/actividadU2Laboratorio/actions/workflows/cd.yml/badge.svg)](https://github.com/TU_USUARIO/actividadU2Laboratorio/actions/workflows/cd.yml)
-
 Aplicación web **Node.js / Express** con pipelines **CI/CD** completos usando **GitHub Actions** y **Jenkins**.
 
 ---
@@ -19,12 +16,11 @@ actividadU2Laboratorio/
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml           ← GitHub Actions — CI Pipeline
-│       └── cd.yml           ← GitHub Actions — CD Pipeline
 ├── jenkins/
 │   ├── Dockerfile.jenkins   ← Imagen Jenkins con Docker + Node
 │   ├── docker-compose.jenkins.yml ← Stack Jenkins local
 │   └── plugins.txt          ← Plugins preinstalados
-├── Jenkinsfile              ← Pipeline declarativo Jenkins
+├── Jenkinsfile              ← Jenkins — CD Pipeline
 ├── Dockerfile               ← Imagen Docker multi-stage de la app
 ├── docker-compose.yml       ← Compose para desarrollo local
 ├── .eslintrc.json           ← Configuración ESLint
@@ -84,45 +80,23 @@ Checkout → 🔍 Lint → 🧪 Test (+ reporte cobertura) → 🐳 Build Docker
 | **Test** | Jest + Supertest | Tests unitarios con reporte de cobertura |
 | **Build** | Docker Buildx | Verifica que el Dockerfile compile correctamente |
 
-### CD Pipeline (`.github/workflows/cd.yml`)
+### CD Pipeline (`Jenkinsfile`)
 
-**Disparador:** `push` a `main` (o ejecución manual `workflow_dispatch`)
+**Disparador:** `push` a `pull_request` (o ejecución manual)
 
 ```
-🐳 Build & Push (GHCR) → 🚀 Deploy (SSH / Kubernetes / genérico)
+🐳 Build & Push (Docker Hub) → 🚀 Deploy (Kubernetes)
 ```
 
-#### Secrets requeridos en GitHub
+#### Secrets requeridos en Jenkins
 
 > Settings → Secrets and variables → Actions
 
 | Secret | Descripción |
 |--------|-------------|
-| `GITHUB_TOKEN` | Automático — permite push a GHCR |
-| `DEPLOY_HOST` | (Opcional) IP/hostname del servidor de despliegue |
-| `DEPLOY_USER` | (Opcional) Usuario SSH del servidor |
-| `DEPLOY_KEY` | (Opcional) Clave privada SSH |
+| `dockerhub-credentials` | Credenciales de Docker Hub |
 
 ---
-
-## 🔧 CI/CD con Jenkins
-
-### Pipeline declarativo (`Jenkinsfile`)
-
-**Stages:**
-
-```
-📥 Checkout → 📦 Install → 🔍 Lint → 🧪 Test → 🐳 Build → 📤 Push* → 🚀 Deploy*
-```
-> \* Push y Deploy solo se ejecutan en la rama `main`
-
-#### Opciones de despliegue (comentadas en el `Jenkinsfile`)
-
-| Opción | Descripción | Credenciales necesarias |
-|--------|-------------|------------------------|
-| **A — SSH** | Docker en VPS remoto | `deploy-ssh-key` |
-| **B — Kubernetes** | `kubectl set image` | `kube-config` |
-| **C — Genérico** | Simulación (activa por defecto) | — |
 
 ### Levantar Jenkins localmente
 
@@ -139,9 +113,7 @@ Abrir http://localhost:8080 y completar el wizard de configuración inicial.
 
 | ID de credencial | Tipo | Descripción |
 |-----------------|------|-------------|
-| `ghcr-credentials` | Username + Password | Usuario GitHub + token con `write:packages` |
-| `deploy-ssh-key` | SSH Private Key | Clave para deploy por SSH (Opción A) |
-| `kube-config` | Secret File | Kubeconfig codificado en Base64 (Opción B) |
+| `kube-config` | Secret File | Kubeconfig codificado en Base64 |
 
 #### Crear el pipeline en Jenkins
 
@@ -203,6 +175,29 @@ Push a GitHub
 
 ---
 
-## 📄 Licencia
+## 📸 Evidencias de Ejecución Técnica
 
-MIT — Ver [LICENSE](LICENSE)
+A continuación, se presentan las capturas que documentan la ejecución y el correcto funcionamiento de los pipelines de CI/CD:
+
+### 1. Evidencia de Pull Request
+![Evidencia de Pull Request](evidencias/img/evidenciaPullRequest.png)
+
+### 2. Validaciones CI en GitHub Actions
+![Validaciones CI en GitHub Actions](evidencias/img/validacionesCiGitHubActions.png)
+
+### 3. Ejecución Automática de CI
+![Ejecución Automática de CI](evidencias/img/ejecucionAutomaticaCi.png)
+
+### 4. Aprobación Pendiente de Pull Request
+![Aprobación Pendiente de Pull Request](evidencias/img/gitHubActionsPendingAcceptPullRequest.png)
+
+### 5. Ejecución en GitHub Actions (Push)
+![GitHub Actions Push](evidencias/img/gitHubActionsPush.png)
+
+### 6. Ejecución de CD en Jenkins
+![Ejecución de Jenkins CD](evidencias/img/ejecucionJenkinsCd.png)
+
+### 7. Despliegue Exitoso
+![Despliegue Exitoso](evidencias/img/despliegueExcitoso.png)
+
+---
